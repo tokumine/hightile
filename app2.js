@@ -20,7 +20,7 @@ var express = require('express')
 ctx.patternQuality = 'fast';
 ctx.antialias 		 = 'none';
 var imgd = new Canvas.Image();
-imgd.src = 'todo/images/google_point.png'
+imgd.src = 'todo/images/google_point_8.png'
 
 // Middleware
 app.use(express.logger({ format: '\x1b[90m:remote-addr\x1b[0m - \x1b[33m:method\x1b[0m :url :status \x1b[90m:response-timems\x1b[0m' }));
