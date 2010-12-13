@@ -3,6 +3,7 @@
 
 // Configure app
 var express = require('express')
+// , pg		    = require('pg')
  , pg       = require('pg')
  , d        = require('./global_mercator')
  , mercator = new GlobalMercator()
@@ -13,6 +14,7 @@ var express = require('express')
  , size_y   = 256
  , Canvas   = require('canvas')
  , canvas   = new Canvas(size_x, size_y)
+ , imgd 		= new Canvas.Image()
  , ctx      = canvas.getContext('2d')
  , db_str   = "pg://postgres@localhost:5432/test_points"
  , sql      = "select y(the_geom) as y,x(the_geom) as x from points9 where the_geom && v_get_tile($1, $2, $3) group by y, x";
@@ -20,8 +22,7 @@ var express = require('express')
 // Configure Canvas Google Dot style    
 ctx.patternQuality = 'fast';
 ctx.antialias      = 'none';
-var imgd = new Canvas.Image();
-imgd.src = 'todo/images/google_point_8.png'
+imgd.src = 'todo/images/google_point_8.png';
 
 // Middleware
 app.use(express.logger({ format: '\x1b[90m:remote-addr\x1b[0m - \x1b[33m:method\x1b[0m :url :status \x1b[90m:response-timems\x1b[0m' }));
@@ -30,7 +31,7 @@ app.use(app.router);
 app.use(express.errorHandler({ showStack: true }));
 
 //DB
-var client = new Client(db_str);
+var client = new pg.Client(db_str);
 client.connect();
 
 //routes
