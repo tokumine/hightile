@@ -54,7 +54,7 @@ app.get('/', function(req, res){
   
 	// Configure SQL callbacks
 	query.on('row', function(row) {
-    p_xy = mercator.MetersToPixels(parseFloat(row[i].x),parseFloat(row[i].y),parseInt(z)) 
+    p_xy = mercator.MetersToPixels(parseFloat(row.x),parseFloat(row.y),parseInt(z)) 
     x = p_xy[0]%size_x;
     y = size_y-(p_xy[1]%size_y);
     ctx.drawImage(imgd, x,y);       		
