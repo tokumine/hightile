@@ -3,13 +3,10 @@
 
 // Configure app
 var express = require('express')
-// , pg		    = require('pg')
  , pg       = require('pg')
  , d        = require('./global_mercator')
  , mercator = new GlobalMercator()
- , sys      = require('sys')
  , app      = express.createServer()
- , puts     = sys.puts
  , size_x   = 256
  , size_y   = 256
  , Canvas   = require('canvas')
@@ -41,9 +38,9 @@ app.get('/', function(req, res){
   ctx.clearRect(0,0,size_x,size_y)
 
   // Parse arguments
-  x = (req.query.x) ? req.query.x : "0"
-  y = (req.query.y) ? req.query.y : "0"
-  z = (req.query.z) ? req.query.z : "10"
+  x = (req.query.x) ? parseFloat(req.query.x) : 0
+  y = (req.query.y) ? parseFloat(req.query.y) : 0
+  z = (req.query.z) ? parseInt(req.query.z) : 10
         
   // Call SQL
 	query = client.query({
@@ -54,7 +51,7 @@ app.get('/', function(req, res){
   
 	// Configure SQL callbacks
 	query.on('row', function(row) {
-    p_xy = mercator.MetersToPixels(parseFloat(row.x),parseFloat(row.y),parseInt(z)) 
+    p_xy = mercator.MetersToPixels(row.x,row.y,z) 
     x = p_xy[0]%size_x;
     y = size_y-(p_xy[1]%size_y);
     ctx.drawImage(imgd, x,y);       		
