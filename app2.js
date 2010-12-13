@@ -2,16 +2,22 @@
 // Highspeed tileserver using node.js and cairo. Configured as a replacement for Gmaps.
 
 // Configure app
+var p = function () {
+    puts(sys.inspect.apply(this, arguments));
+}
+
 var express = require('express')
  , pg       = require('pg')
  , d        = require('./global_mercator')
  , mercator = new GlobalMercator()
  , app      = express.createServer()
+ , sys      = require('sys')
+ , puts     = sys.puts
  , size_x   = 256
  , size_y   = 256
  , Canvas   = require('canvas')
  , canvas   = new Canvas(size_x, size_y)
- , imgd 		= new Canvas.Image()
+ , imgd     = new Canvas.Image()
  , ctx      = canvas.getContext('2d')
  , db_str   = "pg://postgres@localhost:5432/test_points"
  , sql      = "select y(the_geom) as y,x(the_geom) as x from points9 where the_geom && v_get_tile($1, $2, $3) group by y, x";
@@ -43,23 +49,23 @@ app.get('/', function(req, res){
   z = (req.query.z) ? parseInt(req.query.z) : 10
         
   // Call SQL
-	query = client.query({
-	    text: sql,
-	    name: 'generate_points',
-	    values: [x,y,z]
-	});
+  query = client.query({
+    text: sql,
+    name: 'generate_points',
+    values: [x,y,z]
+  });
   
-	// Configure SQL callbacks
-	query.on('row', function(row) {
+  // Configure SQL callbacks
+  query.on('row', function(row) {
     p_xy = mercator.MetersToPixels(row.x,row.y,z) 
     x = p_xy[0]%size_x;
     y = size_y-(p_xy[1]%size_y);
-    ctx.drawImage(imgd, x,y);       		
-	});
+    ctx.drawImage(imgd, x,y);           
+  });
 
-	query.on('end', function(){
-		res.send("<img src='" + canvas.toDataURL() + "'>");
-	});
+  query.on('end', function(){
+    res.send("<img src='" + canvas.toDataURL() + "'>");
+  });
     
 });
 
