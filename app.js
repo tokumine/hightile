@@ -56,7 +56,7 @@ app.get('/', function(req, res){
 				+ c.escapeString(y) + "," 
 				+ c.escapeString(z) + ") group by y, x;"
 			
-	console.log('Pre SQL: %dms', new Date - start);			
+	console.log('Pre SQL: %dms', new Date - start);     
 	start = new Date
 	// Call SQL and pass off callback for render
 	c.query(sql, function (err, rows) {		
