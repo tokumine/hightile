@@ -30,7 +30,7 @@ var express = require('express')
 ctx.fillStyle 		 = '#ff6666';
 ctx.strokeStyle 	 = "#000";
 ctx.patternQuality = 'fast';
-//ctx.antialias 		 = 'none';
+ctx.antialias 		 = 'none';
 
 // DB connection
 var c = postgres.createConnection("host='' dbname=test_points user=postgres");
@@ -43,6 +43,7 @@ app.use(express.errorHandler({ showStack: true }));
 
 //routes
 app.get('/', function(req, res){
+	start    = new Date;
 	
 	// Parse arguments
 	x = (req.query.x) ? req.query.x : "0"
@@ -53,18 +54,21 @@ app.get('/', function(req, res){
 	sql = "select y(the_geom) as y,x(the_geom) as x from points9 where the_geom && v_get_tile(" 
 				+ c.escapeString(x) + "," 
 				+ c.escapeString(y) + "," 
-				+ c.escapeString(z) + ");"
+				+ c.escapeString(z) + ") group by y, x;"
 			
+	console.log('Pre SQL: %dms', new Date - start);			
+	start = new Date
 	// Call SQL and pass off callback for render
 	c.query(sql, function (err, rows) {		
 	  if (err) throw err;	
-	   // puts("result1:");
-	   //p(rows);
 		
 		// Clear canvas for render
 		ctx.clearRect(0,0,size_x,size_y)
-
+		console.log('SQL (' + rows.length + ' rows): %dms', new Date - start);	
+	 	start = new Date
+	
 		// Draw google circles on tile
+		pnt  = 0;
 		for (i=0;i<rows.length;i++){
 			p_xy = mercator.MetersToPixels(parseFloat(rows[i][1]),parseFloat(rows[i][0]),parseInt(z))	
 			x = p_xy[0]%size_x;
@@ -73,7 +77,9 @@ app.get('/', function(req, res){
 	    ctx.arc(x,y,4,0,6.28318531,true);
 	    ctx.fill();
 			ctx.stroke();				
+			pnt++;
 		}
+		console.log('rendered ' + pnt + ' points %dms', new Date - start);	
 				
 		// Sent to browser				
 		// res.header('Content-Type', "image/png");
