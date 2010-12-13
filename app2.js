@@ -13,8 +13,9 @@ var express = require('express')
  , size_y   = 256
  , Canvas   = require('canvas')
  , canvas   = new Canvas(size_x, size_y)
- , ctx      = canvas.getContext('2d');
+ , ctx      = canvas.getContext('2d')
  , db_str   = "pg://postgres@localhost:5432/test_points"
+ , sql      = "select y(the_geom) as y,x(the_geom) as x from points9 where the_geom && v_get_tile($1, $2, $3) group by y, x";
 
 // Configure Canvas Google Dot style    
 ctx.patternQuality = 'fast';
@@ -28,45 +29,40 @@ app.use(express.bodyDecoder());
 app.use(app.router);
 app.use(express.errorHandler({ showStack: true }));
 
+//DB
+var client = new Client(db_str);
+client.connect();
+
 //routes
 app.get('/', function(req, res){
-  start    = new Date;
   
+  // Clear canvas for render
+  ctx.clearRect(0,0,size_x,size_y)
+
   // Parse arguments
   x = (req.query.x) ? req.query.x : "0"
   y = (req.query.y) ? req.query.y : "0"
   z = (req.query.z) ? req.query.z : "10"
+        
+  // Call SQL
+	query = client.query({
+	    text: sql,
+	    name: 'generate_points',
+	    values: [x,y,z]
+	});
   
-  // Build SQL
-  sql = "select y(the_geom) as y,x(the_geom) as x from points9 where the_geom && v_get_tile($1, $2, $3) group by y, x"
-      
-  // Call SQL and pass off callback for render
-  pg.connect(db_str, function(err, client) {
-    if(err) {
-      console.log('connection error: ' + err);
-    }
-    else {
-      client.query(sql,[x,y,z], function (err, result) {    
-        if (err) {
-          console.log('query error: ' + err);     
-        }
+	// Configure SQL callbacks
+	query.on('row', function(row) {
+    p_xy = mercator.MetersToPixels(parseFloat(row[i].x),parseFloat(row[i].y),parseInt(z)) 
+    x = p_xy[0]%size_x;
+    y = size_y-(p_xy[1]%size_y);
+    ctx.drawImage(imgd, x,y);       		
+	});
 
-        // Clear canvas for render
-        ctx.clearRect(0,0,size_x,size_y)
-
-        // Draw google circles on tile
-        for (i=0;i<result.rows.length;i++){
-          p_xy = mercator.MetersToPixels(parseFloat(result.rows[i].x),parseFloat(result.rows[i].y),parseInt(z)) 
-          x = p_xy[0]%size_x;
-          y = size_y-(p_xy[1]%size_y);
-          ctx.drawImage(imgd, x,y);       
-        }
-
-        // Sent to browser        
-        res.send("<img src='" + canvas.toDataURL() + "'>");
-      });
-    }
-  });
+	query.on('end', function(){
+		res.send("<img src='" + canvas.toDataURL() + "'>");
+	});
+    
 });
 
 app.listen('3000');
