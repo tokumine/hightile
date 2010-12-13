@@ -11,3 +11,13 @@ Currently only renders points in the Google Fusion Tables style
 * node_postgres
 * node-cairo
 * expressjs
+
+
+## Possible optimisations
+
+I think it can be further optimised in the following spots:
+
+1) use sprites for circles instead of drawing procedurally
+2) send png as binary
+3) upgrade the V8 interpreter periodically ;)
+4) probably a bunch of places - it's pretty crude. 
