@@ -61,24 +61,24 @@ app.get('/', function(req, res){
 	// Call SQL and pass off callback for render
 	c.query(sql, function (err, rows) {		
 	  if (err) throw err;	
-		
-		// Clear canvas for render
-		ctx.clearRect(0,0,size_x,size_y)
+    // 
+    // // Clear canvas for render
+    // ctx.clearRect(0,0,size_x,size_y)
 		console.log('SQL (' + rows.length + ' rows): %dms', new Date - start);	
 	 	start = new Date
-	
-		// Draw google circles on tile
-		pnt  = 0;
-		for (i=0;i<rows.length;i++){
-			p_xy = mercator.MetersToPixels(parseFloat(rows[i][1]),parseFloat(rows[i][0]),parseInt(z))	
-			x = p_xy[0]%size_x;
-			y = size_y-(p_xy[1]%size_y);
-	    ctx.beginPath();
-	    ctx.arc(x,y,4,0,6.28318531,true);
-	    ctx.fill();
-			ctx.stroke();				
-			pnt++;
-		}
+    //  
+    // // Draw google circles on tile
+     pnt  = 0;
+    // for (i=0;i<rows.length;i++){
+    //  p_xy = mercator.MetersToPixels(parseFloat(rows[i][1]),parseFloat(rows[i][0]),parseInt(z)) 
+    //  x = p_xy[0]%size_x;
+    //  y = size_y-(p_xy[1]%size_y);
+    //      ctx.beginPath();
+    //      ctx.arc(x,y,4,0,6.28318531,true);
+    //      ctx.fill();
+    //  ctx.stroke();       
+    //  pnt++;
+    // }
 		console.log('rendered ' + pnt + ' points %dms', new Date - start);	
 				
 		// Sent to browser				
