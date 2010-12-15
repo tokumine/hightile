@@ -12,12 +12,24 @@ var http     = require('http')
  , size_x   = 256
  , size_y   = 256
  , Canvas   = require('canvas')
- , imgd     = new Canvas.Image()
  , db_str   = "pg://postgres@localhost:5432/test_points"
  , sql      = "select y(the_geom) as y,x(the_geom) as x from points9 where the_geom && v_get_tile($1, $2, $3) group by y, x";
 
 // Configure Canvas Google Dot style    
-imgd.src = 'todo/images/google_point_8.png';
+//imgd.src = 'todo/images/google_point_8.png';
+canvas   = new Canvas(10, 10)
+ctx      = canvas.getContext('2d')
+ctx.fillStyle = "rgba(255,255,255,0)"; 
+ctx.fillRect (0, 0, 10, 10);
+
+ctx.fillStyle 		 = '#ff6666';
+ctx.strokeStyle 	 = "#000";
+ctx.beginPath();
+ctx.arc(5,5,4,0,6.28318531,true);
+ctx.fill();
+ctx.stroke();
+var gpnt = ctx.getImageData(0,0,10,10);
+
 
 var rows = [ { y: 6724481.90904288, x: 15275027.5441305 },
   { y: 1066165.64153091, x: -7858639.58780846 },
@@ -9789,7 +9801,8 @@ http.createServer(function (req, res) {
     p_xy = mercator.MetersToPixels(rows[i].x, rows[i].y, z);
     x = p_xy[0] & (size_x - 1);
     y = size_y-(p_xy[1] & (size_y - 1));
-    ctx.drawImage(imgd, x,y);                        
+    ctx.putImageData(gpnt, x, y);
+    //drawImage(imgd, x,y);                        
   }
 
   res.writeHead(200, {'Content-Type': 'image/png'});
