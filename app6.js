@@ -62,6 +62,6 @@ http.createServer(function (req, res) {
       pool.release(client);      
     });
   });            
-}).listen(3000, "127.0.0.1");;
+}).listen(3000);
 
 console.log('Test server listening on port 3000');
