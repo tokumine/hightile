@@ -5,7 +5,7 @@ require 'cairo'
 require "base64"
 require 'stringio'
 
-class App < Sinatra::Base
+class AppCairo < Sinatra::Base
 
   @@conn = PGconn.open(:dbname => 'test_points', :user => 'postgres')
 

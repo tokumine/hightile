@@ -1,6 +1,6 @@
 require "rubygems"
 require "sinatra"
-require './app.rb'
+require './app_gd.rb'
 
 set :environment, :production
-run App
+run AppGd
