@@ -22,9 +22,9 @@ class AppGdSpriteRack
     
     res.each_with_index do |r,i|
       re = 156543.033928041 / (2 ** z.to_i); 
-    	px = ((r['x'].to_f + 20037508.3427892) / re).to_i
-    	py = 256-((r['y'].to_f + 20037508.3427892) / re).to_i	
-    	@@marker.copy(im, px, py, 0, 0, 9, 9)
+      px = ((r['x'].to_f + 20037508.3427892) / re).to_i
+      py = 256-((r['y'].to_f + 20037508.3427892) / re).to_i 
+      @@marker.copy(im, px, py, 0, 0, 9, 9)
     end    
     
     ["200",{"Content-Type" => "image/png"}, [im.pngStr]]
