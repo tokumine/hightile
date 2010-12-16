@@ -21,8 +21,8 @@ class AppGdSpriteRack
     
     res.each do |r|
       re = 156543.033928041 / (2 ** z.to_i); 
-      px = ((r['x'].to_f + 20037508.3427892) / re).to_i
-      py = 256-((r['y'].to_f + 20037508.3427892) / re).to_i 
+      px = ((r['x'].to_f + 20037508.3427892) / re).to_i % 256
+      py = 256-(((r['y'].to_f + 20037508.3427892) / re).to_i % 256) 
       @@marker.copy(im, px, py, 0, 0, 9, 9)
     end    
     
