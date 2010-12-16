@@ -1,6 +1,4 @@
 require "rubygems"
-require "sinatra"
-require './app_gd_sprite.rb'
+require './app_gd_sprite_rack.rb'
 
-set :environment, :production
-run AppGdSprite
+run AppGdSpriteRack.new
