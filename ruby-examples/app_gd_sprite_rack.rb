@@ -17,10 +17,9 @@ class AppGdSpriteRack
       
     # prepare image     
     im = GD::Image.new(256,256)
-    white = im.colorAllocate(255,255,255)
-    im.transparent(white)
+    im.transparent(im.colorAllocate(255,255,255))
     
-    res.each_with_index do |r,i|
+    res.each do |r,i|
       re = 156543.033928041 / (2 ** z.to_i); 
       px = ((r['x'].to_f + 20037508.3427892) / re).to_i
       py = 256-((r['y'].to_f + 20037508.3427892) / re).to_i 
